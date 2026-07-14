@@ -13,7 +13,7 @@ export default function OrderPage() {
       <div className="mx-auto max-w-3xl text-center">
         <span className="eyebrow">Order online</span>
         <h1 className="font-display mt-5 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
-          Build your box.
+          Build <span className="font-script text-brand-royal-gold-dark">your box.</span>
         </h1>
         <p className="mt-4 text-lg leading-8 text-stone-600">
           Pick your boxes, add delivery details, and checkout — right here on the site.
