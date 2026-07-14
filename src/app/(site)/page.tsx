@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import ReviewsMarquee from "@/components/ReviewsMarquee";
+import { ContactIcon, FlameIcon, PancakeIcon, ToppingIcon, TrackIcon } from "@/components/icons";
 import { accentMap } from "@/lib/data";
 
 const quickLinks = [
-  { href: "/menu", icon: "🥞", title: "Menu", copy: "Every dish, every size, live pricing.", accent: "coral" as const },
-  { href: "/toppings", icon: "🍫", title: "Toppings", copy: "Add-ons priced individually — pick as many as you like.", accent: "royal" as const },
-  { href: "/track-order", icon: "📦", title: "Track Order", copy: "Enter your order number to see its status.", accent: "gold" as const },
-  { href: "/contact", title: "Contact", copy: "Questions or bulk requests? Reach us directly.", accent: "coral" as const },
+  { href: "/menu", icon: PancakeIcon, title: "Menu", copy: "Every dish, every size, live pricing.", accent: "coral" as const },
+  { href: "/toppings", icon: ToppingIcon, title: "Toppings", copy: "Add-ons priced individually — pick as many as you like.", accent: "royal" as const },
+  { href: "/track-order", icon: TrackIcon, title: "Track Order", copy: "Enter your order number to see its status.", accent: "gold" as const },
+  { href: "/contact", icon: ContactIcon, title: "Contact", copy: "Questions or bulk requests? Reach us directly.", accent: "coral" as const },
 ];
 
 const steps = [
@@ -70,8 +71,11 @@ function PhotoTile({
   sticker?: string;
 }) {
   const a = accentMap[accent];
+  const tilt = rotate === "left" ? "-rotate-2" : rotate === "right" ? "rotate-2" : "";
   return (
-    <div className={`relative mx-auto w-full max-w-[420px] overflow-hidden rounded-2xl shadow-lg ring-1 ${a.tint} transform transition duration-300 hover:scale-105`}>
+    <div
+      className={`relative mx-auto w-full max-w-[420px] overflow-hidden rounded-2xl shadow-lg ring-1 ${a.tint} ${tilt} transform transition duration-300 hover:rotate-0 hover:scale-105`}
+    >
       <div className="relative aspect-[4/5] w-full bg-gray-50">
         <Image src={src} alt={alt} fill sizes="(max-width: 768px) 92vw, 420px" className="object-cover" />
       </div>
@@ -93,7 +97,9 @@ export default function Home() {
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <span className="eyebrow">Limited time offer · Abuja</span>
-              <span className="sticker wiggle bg-brand-coral text-white">🔥 Hot right now</span>
+              <span className="sticker wiggle bg-brand-coral text-white">
+                <FlameIcon className="h-3.5 w-3.5" /> Hot right now
+              </span>
             </div>
             <p className="font-script mt-4 text-3xl text-brand-royal-gold-dark sm:text-4xl">Golden. Soft. Freshly made.</p>
             <h1 className="font-display mt-3 max-w-xl text-[2.75rem] font-semibold leading-[1] tracking-[-0.03em] text-brand-ink sm:text-6xl lg:text-[4rem] xl:text-[4.6rem]">
@@ -168,13 +174,16 @@ export default function Home() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {quickLinks.map((link) => {
             const a = accentMap[link.accent];
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`group rounded-[2rem] border-2 bg-white/80 p-6 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-950/10 ${a.border}/30`}
               >
-                {link.icon ? <span className="text-3xl">{link.icon}</span> : null}
+                <span className={`grid h-12 w-12 place-items-center rounded-2xl ${a.tint} ${a.text}`}>
+                  <Icon className="h-6 w-6" />
+                </span>
                 <h3 className="mt-4 text-xl font-black text-brand-ink">{link.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-stone-600">{link.copy}</p>
                 <span className={`mt-4 inline-flex text-sm font-black ${a.text}`}>
@@ -191,7 +200,9 @@ export default function Home() {
       <section className="container-page py-16 sm:py-20">
         <div className="grid gap-6 md:grid-cols-3">
           <div className="relative overflow-hidden rounded-[2rem] bg-brand-ink p-8 text-white md:col-span-2">
-            <span className="sticker wiggle absolute right-6 top-6 bg-brand-coral text-white">🔥 Trending</span>
+            <span className="sticker wiggle absolute right-6 top-6 bg-brand-coral text-white">
+              <FlameIcon className="h-3.5 w-3.5" /> Trending
+            </span>
             <p className="text-sm font-black uppercase tracking-[0.22em] text-brand-primary-light">Fast. Fresh. Delivered.</p>
             <h2 className="font-display mt-4 max-w-lg text-4xl font-black tracking-[-0.04em] sm:text-5xl">
               Made fresh, packed with care, <span className="font-script font-medium text-brand-royal-gold-light">delivered to your doorstep.</span>
