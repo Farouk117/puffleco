@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { DELIVERY_FEE, FREE_DELIVERY_THRESHOLD } from "../src/lib/data";
+import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query, type MutationCtx } from "./_generated/server";
 import { requireAdmin } from "./authz";
@@ -105,7 +105,8 @@ export const create = mutation({
       throw new Error("Your order is empty, or the selected items are no longer available.");
     }
 
-    const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+    // Delivery fee depends on distance and is set by the rider on arrival, not collected online.
+    const deliveryFee = 0;
     const discountApplied = Math.max(0, baseTotal - subtotal);
     const grandTotal = subtotal + deliveryFee;
     const orderNumber = await uniqueOrderNumber(ctx);
@@ -130,6 +131,19 @@ export const create = mutation({
     });
 
     await Promise.all(lineItems.map((item) => ctx.db.insert("orderItems", { orderId, ...item })));
+
+    const itemSummary = lineItems
+      .map((item) => `${item.quantity} × ${item.name}${item.toppings.length ? ` (+ ${item.toppings.map((t) => t.name).join(", ")})` : ""}`)
+      .join("\n");
+    await ctx.scheduler.runAfter(0, internal.notifications.sendNewOrderEmail, {
+      orderId,
+      orderNumber,
+      customerName: args.customerName.trim(),
+      phone: args.phone.trim(),
+      address: args.address.trim(),
+      grandTotal,
+      itemSummary,
+    });
 
     return { orderNumber, grandTotal };
   },

@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
-import { accentForIndex, accentMap, DELIVERY_FEE, FREE_DELIVERY_THRESHOLD, formatNaira } from "@/lib/data";
+import { accentMap, formatNaira, type Accent } from "@/lib/data";
 import Skeleton from "@/components/admin/ui/Skeleton";
 import type { MenuProduct } from "@/components/PriceCard";
 
@@ -29,17 +29,19 @@ function Stepper({
         type="button"
         onClick={() => onChange(Math.max(0, quantity - 1))}
         disabled={disabled || quantity === 0}
-        className="grid h-9 w-9 place-items-center rounded-full border-2 border-brand-line/50 text-lg font-black text-brand-ink transition disabled:opacity-30"
+        className="grid h-11 w-11 place-items-center rounded-full border-2 border-brand-ink/20 bg-brand-ink text-lg font-black text-white transition hover:bg-brand-coral disabled:cursor-not-allowed disabled:border-brand-line/30 disabled:bg-brand-line/40 disabled:text-stone-400"
         aria-label="Decrease quantity"
       >
         −
       </button>
-      <span className="w-6 text-center text-lg font-black">{quantity}</span>
+      <span className="min-w-[2.25rem] rounded-full bg-brand-cream px-3 py-2 text-center text-lg font-black text-brand-ink shadow-sm">
+        {quantity}
+      </span>
       <button
         type="button"
         onClick={() => onChange(quantity + 1)}
         disabled={disabled}
-        className="grid h-9 w-9 place-items-center rounded-full bg-brand-ink text-lg font-black text-white transition disabled:opacity-30"
+        className="grid h-11 w-11 place-items-center rounded-full bg-brand-ink text-lg font-black text-white transition hover:bg-brand-coral disabled:cursor-not-allowed disabled:border-brand-line/30 disabled:bg-brand-line/40 disabled:text-stone-400"
         aria-label="Increase quantity"
       >
         +
@@ -48,74 +50,116 @@ function Stepper({
   );
 }
 
-function ProductRow({
+function OrderProductCard({
   product,
   entry,
+  accent,
   onQuantityChange,
   onToggleTopping,
   toppings,
 }: {
   product: MenuProduct;
   entry: CartEntry;
+  accent: Accent;
   onQuantityChange: (next: number) => void;
   onToggleTopping: (toppingId: Id<"toppings">) => void;
   toppings: { _id: Id<"toppings">; name: string; price: number }[];
 }) {
+  const a = accentMap[accent];
   const soldOut = product.status === "sold_out";
+  const selected = entry.quantity > 0;
 
   return (
-    <div className="rounded-[1.5rem] border-2 border-brand-line/30 bg-white/80 p-3 sm:p-4">
+    <article
+      className={`group relative overflow-hidden rounded-[2rem] border-2 bg-white/95 px-4 py-4 transition sm:px-5 sm:py-4 ${
+        selected ? `${a.border} shadow-lg shadow-amber-950/10` : "border-brand-line/40"
+      } ${soldOut ? "opacity-60" : ""}`}
+    >
       <div className="flex items-center gap-4">
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-brand-cream sm:h-20 sm:w-20">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-brand-cream shadow-inner shadow-amber-950/10">
           {product.imageUrl ? (
-            <Image src={product.imageUrl} alt={product.name} fill sizes="80px" className="object-cover" />
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
+          ) : null}
+          {selected ? (
+            <span className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-full bg-brand-ink text-xs font-black text-white ${a.bg}`}>
+              ✓
+            </span>
+          ) : soldOut ? (
+            <span className="absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-full bg-slate-900 text-white text-[0.65rem]">
+              Sold
+            </span>
+          ) : product.isDiscountActive ? (
+            <span className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-full ${a.badgeBg} text-[0.65rem] font-black text-white`}>
+              ★
+            </span>
           ) : null}
         </div>
+
         <div className="min-w-0 flex-1">
-          <p className="truncate text-lg font-black text-brand-ink">{product.name}</p>
-          {soldOut ? (
-            <p className="text-sm font-bold text-red-500">Sold out</p>
-          ) : product.isDiscountActive ? (
-            <p className="text-sm font-bold text-stone-500">
-              <span className="mr-1.5 line-through">{formatNaira(product.basePrice)}</span>
-              <span className="font-price text-brand-royal-gold-dark">{formatNaira(product.effectivePrice)}</span>
-            </p>
-          ) : (
-            <p className="font-price text-sm text-stone-500">{formatNaira(product.basePrice)}</p>
-          )}
+          <p className="truncate text-base font-black text-brand-ink">{product.name}</p>
+          <p className="truncate text-sm text-stone-500">{product.description}</p>
+          <div className="mt-3 flex items-center gap-3">
+            {product.isDiscountActive ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-stone-400 line-through">{formatNaira(product.basePrice)}</span>
+                <span className="rounded-full bg-brand-cream/90 px-3 py-1 text-sm font-black text-brand-coral-dark shadow-sm">
+                  {formatNaira(product.effectivePrice)}
+                </span>
+              </div>
+            ) : (
+              <span className="rounded-full bg-brand-cream/90 px-3 py-1 text-sm font-black text-brand-ink shadow-sm">
+                {formatNaira(product.basePrice)}
+              </span>
+            )}
+          </div>
         </div>
-        <Stepper quantity={entry.quantity} onChange={onQuantityChange} disabled={soldOut} />
+
+        <div className="flex items-center">
+          <Stepper quantity={entry.quantity} onChange={onQuantityChange} disabled={soldOut} />
+        </div>
       </div>
 
-      {entry.quantity > 0 && toppings.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-2 border-t border-brand-line/20 pt-3">
-          {toppings.map((t) => (
-            <label
-              key={t._id}
-              className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition ${
-                entry.toppingIds.includes(t._id)
-                  ? "border-brand-ink bg-brand-ink text-white"
-                  : "border-brand-line/50 text-stone-600 hover:bg-brand-cream"
-              }`}
-            >
-              <input
-                type="checkbox"
-                className="hidden"
-                checked={entry.toppingIds.includes(t._id)}
-                onChange={() => onToggleTopping(t._id)}
-              />
-              {t.name} +{formatNaira(t.price)}
-            </label>
-          ))}
+      {selected && toppings.length > 0 ? (
+        <div className="mt-4 rounded-2xl border border-brand-line/30 bg-brand-cream/70 p-3">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-brand-royal-gold-dark">
+            Choose your toppings
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {toppings.map((t) => (
+              <label
+                key={t._id}
+                className={`flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition ${
+                  entry.toppingIds.includes(t._id)
+                    ? "border-brand-ink bg-brand-ink text-white"
+                    : "border-brand-line/50 bg-white text-stone-600 hover:bg-brand-cream"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="hidden"
+                  checked={entry.toppingIds.includes(t._id)}
+                  onChange={() => onToggleTopping(t._id)}
+                />
+                {t.name} +{formatNaira(t.price)}
+              </label>
+            ))}
+          </div>
         </div>
       ) : null}
-    </div>
+    </article>
   );
 }
 
 export default function OrderForm() {
   const searchParams = useSearchParams();
   const preselected = searchParams.get("box");
+  const preselectedCategorySlug = searchParams.get("category");
 
   const categories = useQuery(api.categories.list);
   const products = useQuery(api.products.listAll);
@@ -126,6 +170,7 @@ export default function OrderForm() {
   const [cart, setCart] = useState<Record<string, CartEntry>>(() =>
     preselected ? { [preselected]: { quantity: 1, toppingIds: [] } } : {},
   );
+  const [activeCategoryIdState, setActiveCategoryIdState] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -176,8 +221,7 @@ export default function OrderForm() {
 
   const itemCount = cartLines.reduce((sum, l) => sum + l.entry.quantity, 0);
   const subtotal = cartLines.reduce((sum, l) => sum + l.lineTotal, 0);
-  const deliveryFee = subtotal === 0 ? 0 : subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
-  const total = subtotal + deliveryFee;
+  const total = subtotal;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -261,6 +305,19 @@ export default function OrderForm() {
     productsByCategory.set(p.categoryId, list);
   });
 
+  const categoryAccents: Record<string, Accent> = {};
+  categories!.forEach((category, index) => {
+    categoryAccents[category._id] = (["coral", "royal", "gold"] as const)[index % 3];
+  });
+
+  const preselectedCategoryId = preselected ? productsById.get(preselected as Id<"products">)?.categoryId : undefined;
+  const slugCategoryId = preselectedCategorySlug
+    ? categories!.find((c) => c.slug === preselectedCategorySlug)?._id
+    : undefined;
+  const activeCategoryId = activeCategoryIdState ?? preselectedCategoryId ?? slugCategoryId ?? categories![0]?._id;
+  const activeItems = activeCategoryId ? productsByCategory.get(activeCategoryId) ?? [] : [];
+  const activeAccent = activeCategoryId ? categoryAccents[activeCategoryId] : "coral";
+
   const closed = orderingStatus !== undefined && !orderingStatus.isOpenNow;
 
   return (
@@ -273,30 +330,41 @@ export default function OrderForm() {
       ) : null}
       <form onSubmit={handleSubmit} className="grid gap-10 lg:grid-cols-[1.3fr_0.9fr]">
       <div className="space-y-8">
-        {categories!.map((category, index) => {
-          const items = productsByCategory.get(category._id) ?? [];
-          if (items.length === 0) return null;
-          const accent = accentForIndex(index);
-          return (
-            <div key={category._id}>
-              <h2 className={`text-sm font-black uppercase tracking-[0.22em] ${accentMap[accent].text}`}>
-                {category.name}
-              </h2>
-              <div className="mt-4 grid gap-3">
-                {items.map((product) => (
-                  <ProductRow
-                    key={product._id}
-                    product={product}
-                    entry={cart[product._id] ?? { quantity: 0, toppingIds: [] }}
-                    onQuantityChange={(next) => setQuantity(product._id, next)}
-                    onToggleTopping={(toppingId) => toggleTopping(product._id, toppingId)}
-                    toppings={toppings ?? []}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
+        <div>
+          <div className="flex w-fit flex-wrap gap-1.5 rounded-full border-2 border-brand-line/30 bg-white/70 p-1.5">
+            {categories!.map((category) => {
+              const count = (productsByCategory.get(category._id) ?? []).length;
+              if (count === 0) return null;
+              const active = category._id === activeCategoryId;
+              return (
+                <button
+                  key={category._id}
+                  type="button"
+                  onClick={() => setActiveCategoryIdState(category._id)}
+                  className={`rounded-full px-5 py-2 text-sm font-black transition ${
+                    active ? "bg-brand-ink text-white" : "text-stone-600 hover:bg-brand-cream"
+                  }`}
+                >
+                  {category.name} <span className="opacity-60">({count})</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div key={activeCategoryId} className="stagger-grid mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
+            {activeItems.map((product) => (
+              <OrderProductCard
+                key={product._id}
+                product={product}
+                accent={activeAccent}
+                entry={cart[product._id] ?? { quantity: 0, toppingIds: [] }}
+                onQuantityChange={(next) => setQuantity(product._id, next)}
+                onToggleTopping={(toppingId) => toggleTopping(product._id, toppingId)}
+                toppings={toppings ?? []}
+              />
+            ))}
+          </div>
+        </div>
 
         <div>
           <h2 className="text-sm font-black uppercase tracking-[0.22em] text-brand-primary-dark">Delivery details</h2>
@@ -365,19 +433,19 @@ export default function OrderForm() {
       </div>
 
       <div className="h-fit rounded-[2rem] border-2 border-brand-line/40 bg-white/90 p-6 shadow-xl shadow-amber-950/10 lg:sticky lg:top-28">
-        <h2 className="text-xl font-black">Order summary</h2>
+        <h2 className="text-xl font-black text-brand-ink">Order summary</h2>
         {cartLines.length === 0 ? (
           <p className="mt-4 text-sm text-stone-500">Your box is empty — add items from the menu on the left.</p>
         ) : (
           <div className="mt-4 space-y-3">
             {cartLines.map((l) => (
-              <div key={l.productId} className="text-sm font-bold text-stone-700">
-                <div className="flex items-center justify-between">
-                  <span>{l.entry.quantity} × {l.product.name}</span>
-                  <span className="font-price">{formatNaira(l.lineTotal)}</span>
+              <div key={l.productId} className="rounded-3xl border border-brand-line/30 bg-brand-cream/80 p-3 text-sm text-brand-ink shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-medium text-stone-700">{l.entry.quantity} × {l.product.name}</span>
+                  <span className="font-price text-base font-black text-brand-coral-dark">{formatNaira(l.lineTotal)}</span>
                 </div>
                 {l.selectedToppings.length > 0 ? (
-                  <p className="text-xs font-medium text-stone-500">
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
                     + {l.selectedToppings.map((t) => t.name).join(", ")}
                   </p>
                 ) : null}
@@ -385,20 +453,19 @@ export default function OrderForm() {
             ))}
           </div>
         )}
-        <div className="mt-5 space-y-2 border-t border-brand-line/30 pt-4 text-sm font-bold text-stone-600">
-          <div className="flex justify-between"><span>Subtotal</span><span className="font-price">{formatNaira(subtotal)}</span></div>
+        <div className="mt-5 space-y-2 border-t border-brand-line/30 pt-4 text-sm text-stone-600">
           <div className="flex justify-between">
-            <span>Delivery</span>
-            <span className="font-price">{deliveryFee === 0 ? "Free" : formatNaira(deliveryFee)}</span>
+            <span>Subtotal</span>
+            <span className="font-black text-brand-ink">{formatNaira(subtotal)}</span>
           </div>
         </div>
-        <div className="mt-3 flex justify-between border-t border-brand-line/30 pt-3 text-lg font-black text-brand-ink">
+        <div className="mt-3 flex justify-between border-t border-brand-line/30 pt-3 text-lg font-black text-brand-coral-dark">
           <span>Total</span>
           <span className="font-price text-xl">{formatNaira(total)}</span>
         </div>
-        {subtotal > 0 && subtotal < FREE_DELIVERY_THRESHOLD ? (
-          <p className="mt-3 text-xs font-bold text-brand-coral-dark">
-            Add {formatNaira(FREE_DELIVERY_THRESHOLD - subtotal)} more for free delivery.
+        {subtotal > 0 ? (
+          <p className="mt-3 text-xs font-bold text-stone-500">
+            Delivery fee isn&apos;t included above — it&apos;s based on distance and your rider will confirm it on arrival.
           </p>
         ) : null}
 

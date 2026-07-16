@@ -16,6 +16,7 @@ import type * as categories from "../categories.js";
 import type * as discounts from "../discounts.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
+import type * as notifications from "../notifications.js";
 import type * as orders from "../orders.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   discounts: typeof discounts;
   files: typeof files;
   http: typeof http;
+  notifications: typeof notifications;
   orders: typeof orders;
   products: typeof products;
   seed: typeof seed;

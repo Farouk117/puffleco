@@ -146,7 +146,7 @@ export default function OrderDetail({ orderId }: { orderId: Id<"orders"> }) {
               ) : null}
               <div className="flex justify-between">
                 <span>Delivery fee</span>
-                <span>{order.deliveryFee === 0 ? "Free" : formatNaira(order.deliveryFee)}</span>
+                <span>{order.deliveryFee === 0 ? "Set by rider on arrival" : formatNaira(order.deliveryFee)}</span>
               </div>
             </div>
             <div className="mt-2 flex justify-between border-t border-slate-200 pt-3 text-lg font-black text-slate-900">

@@ -63,6 +63,26 @@ export function InstagramIcon({ className }: { className?: string }) {
   );
 }
 
+export function DeliveryIcon({ className }: { className?: string }) {
+  return (
+    <IconBase className={className}>
+      <path d="M3 7h11v9H3z" />
+      <path d="M14 10h4l3 3v3h-7z" />
+      <circle cx="7.5" cy="18" r="1.6" />
+      <circle cx="17" cy="18" r="1.6" />
+    </IconBase>
+  );
+}
+
+export function ClockIcon({ className }: { className?: string }) {
+  return (
+    <IconBase className={className}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </IconBase>
+  );
+}
+
 export function FlameIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">

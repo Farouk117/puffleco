@@ -31,7 +31,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <Link href="/track-order" className="btn-brand">Track an order</Link>
-          <Link href="/menu" className="btn-ghost">Back to menu</Link>
+          <Link href="/" className="btn-ghost">Back to menu</Link>
         </div>
       </section>
     );
@@ -127,7 +127,9 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             ) : null}
             <div className="flex justify-between">
               <span>Delivery</span>
-              <span className="font-price">{order.deliveryFee === 0 ? "Free" : formatNaira(order.deliveryFee)}</span>
+              <span className="font-price">
+                {order.deliveryFee === 0 ? "Pay rider on arrival" : formatNaira(order.deliveryFee)}
+              </span>
             </div>
           </div>
           <div className="mt-3 flex justify-between border-t border-brand-line/40 pt-3 text-xl font-black text-brand-ink">
@@ -141,7 +143,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         </div>
 
         <div className="mt-8 flex justify-center gap-3 print:hidden">
-          <Link href="/menu" className="btn-ghost">Order again</Link>
+          <Link href="/" className="btn-ghost">Order again</Link>
           <Link href="/contact" className="btn-ghost">Need help?</Link>
         </div>
       </div>

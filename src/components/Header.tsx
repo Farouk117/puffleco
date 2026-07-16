@@ -35,8 +35,11 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link className="btn-brand hidden sm:inline-flex" href="/order">
-            Order Now
+          <Link
+            href="/order"
+            className="hidden rounded-full bg-brand-ink px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-white shadow-lg shadow-black/10 transition hover:bg-brand-coral-dark sm:inline-flex"
+          >
+            Order
           </Link>
           <button
             type="button"
@@ -68,9 +71,9 @@ export default function Header() {
             <Link
               href="/order"
               onClick={() => setOpen(false)}
-              className="btn-brand mt-2 justify-center"
+              className="btn-sleek btn-brand mt-2 justify-center"
             >
-              Order Now
+              Order
             </Link>
           </div>
         </div>

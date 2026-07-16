@@ -37,11 +37,8 @@ export function formatNaira(value: number): string {
   return `₦${value.toLocaleString("en-NG")}`;
 }
 
-export const FREE_DELIVERY_THRESHOLD = 20000;
-export const DELIVERY_FEE = 1500;
-
 export const navLinks = [
-  { href: "/menu", label: "Menu" },
+  { href: "/", label: "Menu" },
   { href: "/toppings", label: "Toppings" },
   { href: "/track-order", label: "Track Order" },
   { href: "/contact", label: "Contact" },
