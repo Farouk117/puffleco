@@ -234,9 +234,8 @@ body {
   }
 
   .bg-food-decor {
-    opacity: 0.16;
-    filter: blur(3px) saturate(1.05);
-    mix-blend-mode: multiply;
+    opacity: 0.22;
+    filter: blur(4px) saturate(0.9);
     animation: aurora-float 30s ease-in-out infinite;
   }
   .bg-food-decor:nth-of-type(2) {
