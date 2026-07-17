@@ -4,14 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { navLinks } from "@/lib/data";
+import { FREE_DELIVERY_THRESHOLD, formatNaira, navLinks } from "@/lib/data";
 
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 overflow-hidden border-b border-brand-line/25 bg-brand-paper/82 backdrop-blur-xl print:hidden">
+    <header className="sticky top-0 z-50 overflow-hidden border-b border-white/50 bg-brand-paper/58 shadow-sm shadow-amber-950/5 backdrop-blur-2xl print:hidden">
       <span className="header-lines" aria-hidden="true" />
       <span className="header-glow" aria-hidden="true" />
       <nav className="container-page relative flex min-h-20 items-center justify-between gap-5">
@@ -53,8 +53,12 @@ export default function Header() {
         </div>
       </nav>
 
+      <div className="border-t border-white/30 bg-brand-royal-gold-dark py-1.5 text-center text-[0.66rem] font-black uppercase tracking-[0.14em] text-white sm:text-xs">
+        Free delivery on orders over {formatNaira(FREE_DELIVERY_THRESHOLD)}
+      </div>
+
       {open ? (
-        <div className="border-t border-brand-line/25 bg-brand-paper md:hidden">
+        <div className="border-t border-white/50 bg-brand-paper/75 backdrop-blur-2xl md:hidden">
           <div className="container-page flex flex-col gap-1 py-4 text-sm font-bold text-stone-700">
             {navLinks.map((link) => (
               <Link

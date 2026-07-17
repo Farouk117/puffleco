@@ -233,6 +233,19 @@ body {
     animation: aurora-float 26s ease-in-out infinite;
   }
 
+  .bg-food-decor {
+    opacity: 0.16;
+    filter: blur(3px) saturate(1.05);
+    mix-blend-mode: multiply;
+    animation: aurora-float 30s ease-in-out infinite;
+  }
+  .bg-food-decor:nth-of-type(2) {
+    animation-delay: -10s;
+  }
+  .bg-food-decor:nth-of-type(3) {
+    animation-delay: -20s;
+  }
+
   .glass-panel {
     background: rgba(255, 253, 248, 0.62);
     backdrop-filter: blur(18px);

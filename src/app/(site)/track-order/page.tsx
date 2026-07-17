@@ -17,7 +17,7 @@ export default function TrackOrderPage() {
         </h1>
       </div>
 
-      <div className="mt-14 rounded-[3rem] bg-white/95 p-8 shadow-2xl shadow-amber-950/10 sm:p-10">
+      <div className="glass-panel mt-14 rounded-[3rem] p-8 shadow-2xl shadow-amber-950/10 sm:p-10">
         <Suspense fallback={null}>
           <TrackOrderForm />
         </Suspense>

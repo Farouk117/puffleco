@@ -63,7 +63,7 @@ export default function ContactPage() {
           </div>
         </Reveal>
 
-        <Reveal className="rounded-[3rem] bg-white/90 p-8 shadow-2xl shadow-amber-950/10">
+        <Reveal className="glass-panel rounded-[3rem] p-8 shadow-2xl shadow-amber-950/10">
           <ContactForm />
         </Reveal>
       </div>

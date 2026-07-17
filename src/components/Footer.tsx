@@ -4,7 +4,7 @@ import { navLinks } from "@/lib/data";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-brand-line/40 bg-brand-paper print:hidden">
+    <footer className="border-t border-white/50 bg-brand-paper/55 backdrop-blur-2xl print:hidden">
       <div className="container-page grid gap-8 py-12 sm:grid-cols-3">
         <div>
           <Image src="/brand/logo.png" alt="The Pufflette.co" width={172} height={67} unoptimized className="h-10 w-auto" />
