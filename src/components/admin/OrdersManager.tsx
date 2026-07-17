@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "@convex/_generated/api";
+import { toCsv, downloadCsv } from "@/lib/csv";
 import { formatNaira } from "@/lib/data";
 import EmptyState from "./ui/EmptyState";
 import Skeleton from "./ui/Skeleton";
@@ -54,11 +55,58 @@ export default function OrdersManager() {
     search: search || undefined,
   });
 
+  function handleExport() {
+    if (!orders || orders.length === 0) return;
+    const headers = [
+      "Order number",
+      "Placed at",
+      "Customer name",
+      "Phone",
+      "Email",
+      "Address",
+      "Payment method",
+      "Payment status",
+      "Status",
+      "Subtotal",
+      "Discount applied",
+      "Delivery fee",
+      "Grand total",
+    ];
+    const rows = orders.map((order) => [
+      order.orderNumber,
+      new Date(order.createdAt).toLocaleString("en-NG"),
+      order.customerName,
+      order.phone,
+      order.email ?? "",
+      order.address,
+      order.paymentMethod === "cash_on_delivery" ? "Cash on delivery" : "Bank transfer",
+      order.paymentStatus,
+      STATUS_LABELS[order.status],
+      order.subtotal,
+      order.discountApplied,
+      order.deliveryFee,
+      order.grandTotal,
+    ]);
+    const csv = toCsv(headers, rows);
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`pufflette-orders-${stamp}.csv`, csv);
+  }
+
   return (
     <div>
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Orders</h1>
-        <p className="mt-1 text-sm text-slate-500">Every order placed on the site, updated live.</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Orders</h1>
+          <p className="mt-1 text-sm text-slate-500">Every order placed on the site, updated live.</p>
+        </div>
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={!orders || orders.length === 0}
+          className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Export report (CSV)
+        </button>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">

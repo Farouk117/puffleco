@@ -128,6 +128,9 @@ export default function DashboardView() {
           <Link href="/admin/orders" className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
             View orders
           </Link>
+          <Link href="/admin/orders" className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+            Export report
+          </Link>
           <Link href="/admin/categories" className="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
             Manage categories
           </Link>

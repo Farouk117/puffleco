@@ -39,6 +39,9 @@ yarn-error.log*
 # runtime data storage
 /data/*.json
 
+# local Convex data backups (contain customer PII)
+/backups/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
